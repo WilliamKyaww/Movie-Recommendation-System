@@ -25,11 +25,14 @@ It uses the **IMDB–MovieLens merged dataset** and implements algorithms to ide
   
 ---
 
-## IMDB Movie Dataset
+## Movie Dataset
 
-Movie files downloaded from the IMDB database
-Files downloaded from [here](https://datasets.imdbws.com/)
-For more dataset information check [here](https://developer.imdb.com/non-commercial-datasets/)
+### IMDB dataset:
+- Files downloaded from [here](https://datasets.imdbws.com/)
+- For more dataset information check [here](https://developer.imdb.com/non-commercial-datasets/)
+
+### MovieLens dataset:
+- File downloaded from [here](https://grouplens.org/datasets/movielens/) (ml-latest.zip under education and development)
 
 
 

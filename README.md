@@ -11,11 +11,11 @@ It uses the **IMDB–MovieLens merged dataset** and implements algorithms to ide
 ---
 
 ## Key Features
-- **Data Preprocessing:** Cleaned and merged IMDB and MovieLens datasets, handled missing values, and standardized column formats.  
+- **Data Preprocessing:** Cleaned and merged IMDB and MovieLens datasets, handled missing values, and standardised column formats.  
 - **Collaborative Filtering:** User–item similarity computed using cosine similarity.  
 - **Content-Based Filtering:** TF-IDF vectorization on movie descriptions to recommend semantically similar titles.  
 - **Hybrid Approach:** Combined similarity scores to enhance diversity and coverage of recommendations.  
-- **Performance Optimization:** Replaced nested loops with vectorized operations in NumPy and Scikit-learn, reducing similarity computation time by ~95%.  
+- **Performance Optimization:** Replaced nested loops with vectorised operations in NumPy and Scikit-learn, reducing similarity computation time by ~95%.  
 - **Evaluation:** Compared recommendation quality using precision and recall metrics, with qualitative validation of recommendation relevance.
 
 ---
@@ -23,8 +23,8 @@ It uses the **IMDB–MovieLens merged dataset** and implements algorithms to ide
 ## Technologies Used
 - **Python**, **NumPy**, **pandas**, **Scikit-learn**, **Matplotlib**, os
 - **TF-IDF Vectorization**, **Cosine Similarity**
-- **Jupyter Notebook**, **Google Colab** for exploration and visualisation
-
+- **Jupyter Notebook**, **Google Colab**
+  
 ---
 
 ## IMDB Movie Dataset
@@ -32,4 +32,5 @@ It uses the **IMDB–MovieLens merged dataset** and implements algorithms to ide
 Movie files downloaded from the IMDB database
 Files downloaded from: https://datasets.imdbws.com/
 Dataset information: https://developer.imdb.com/non-commercial-datasets/
+
 

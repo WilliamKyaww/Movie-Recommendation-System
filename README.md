@@ -28,8 +28,9 @@ It uses the **IMDB–MovieLens merged dataset** and implements algorithms to ide
 ## IMDB Movie Dataset
 
 Movie files downloaded from the IMDB database
-Files downloaded from: https://datasets.imdbws.com/
-Dataset information: https://developer.imdb.com/non-commercial-datasets/
+Files downloaded from [here](https://datasets.imdbws.com/)
+For more dataset information check [here](https://developer.imdb.com/non-commercial-datasets/)
+
 
 
 

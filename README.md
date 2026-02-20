@@ -18,9 +18,10 @@ It uses the **IMDB–MovieLens merged dataset** and implements algorithms to ide
 ---
 
 ## Technologies Used
-- **Python**, **NumPy**, **pandas**, **Scikit-learn**, **Matplotlib**, os
-- **TF-IDF Vectorization**, **Cosine Similarity**
-- **Jupyter Notebook**, **Google Colab**
+- **Language**: Python
+- **Libraries**: NumPy, pandas, Scikit-learn, Matplotlib, os  
+- **Techniques**: TF-IDF Vectorization, Cosine Similarity  
+- **Environment**: Jupyter Notebook, Google Colab  
   
 ---
 
@@ -29,5 +30,6 @@ It uses the **IMDB–MovieLens merged dataset** and implements algorithms to ide
 Movie files downloaded from the IMDB database
 Files downloaded from: https://datasets.imdbws.com/
 Dataset information: https://developer.imdb.com/non-commercial-datasets/
+
 
 

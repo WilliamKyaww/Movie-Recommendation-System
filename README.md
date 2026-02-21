@@ -43,7 +43,7 @@ The filtered and merged dataset used for Content-Based Filtering, after cross-re
 - **Audience_Ratings.csv**:
 The User-Item Rating Matrix, used for Collaborative Filtering. It maps userId to imdbId and provides a numeric rating (normalised from 0 to 1).
 
-They can be found in Kaggle [here](www.kaggle.com/datasets/williamkyaww/movie-metadata-merged-and-cleaned)
+They can be found in Kaggle [here](www.kaggle.com/datasets/williamkyaww/cleaned-and-filtered-movie-metadata)
 
 ---
 

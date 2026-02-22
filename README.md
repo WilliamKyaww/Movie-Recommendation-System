@@ -61,7 +61,7 @@ IMDB Datasets/
 ├── title.principals.tsv
 └── title.ratings.tsv
 
-MovieLens Dataset/     
+MovieLens Datasets/     
 ├── genome-scores.csv
 ├── genome-tags.csv
 ├── links.csv

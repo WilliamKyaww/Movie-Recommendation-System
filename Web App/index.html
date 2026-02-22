@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineMatch - Movie Recommendations</title>
+    <meta name="description"
+        content="Discover similar movies using content-based filtering. Enter a movie you love and get personalized recommendations.">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div class="grain-overlay"></div>
     <div class="spotlight"></div>
-    
+
     <div class="container">
         <header class="header">
             <div class="film-strip"></div>
             <h1 class="title">
                 <span class="title-main">CineMatch</span>
-                <!-- <span class="title-sub">Find Your Next Obsession</span> -->
             </h1>
             <div class="film-strip film-strip-bottom"></div>
         </header>
@@ -28,19 +33,23 @@
                 <div class="search-wrapper">
                     <label for="movieInput" class="search-label">Enter a Movie You Love</label>
                     <div class="input-container">
-                        <input 
-                            type="text" 
-                            id="movieInput" 
-                            class="movie-input" 
-                            placeholder="e.g., The Godfather, Inception, Amélie..."
-                            autocomplete="off"
-                        >
+                        <div class="input-with-autocomplete">
+                            <input type="text" id="movieInput" class="movie-input"
+                                placeholder="e.g., The Godfather, Inception, Amélie..." autocomplete="off">
+                            <div id="autocompleteDropdown" class="autocomplete-dropdown hidden"></div>
+                        </div>
                         <button id="searchBtn" class="search-btn">
                             <span class="btn-text">Discover</span>
                             <span class="btn-icon">▸</span>
                         </button>
                     </div>
                 </div>
+            </div>
+
+            <!-- Initial data loading indicator -->
+            <div id="dataLoadingState" class="data-loading-state">
+                <div class="data-loading-spinner"></div>
+                <p class="data-loading-text">Loading movie database...</p>
             </div>
 
             <div id="loadingState" class="loading-state hidden">
@@ -52,11 +61,38 @@
             </div>
 
             <div id="resultsSection" class="results-section hidden">
+                <!-- Info about the searched movie -->
+                <div id="searchedMovieInfo" class="searched-movie-info"></div>
+
                 <div class="results-header">
                     <h2 class="results-title">Recommended for You</h2>
                     <div class="results-divider"></div>
                 </div>
                 <div id="recommendationsGrid" class="recommendations-grid"></div>
+
+                <!-- Expand / Show More section -->
+                <div id="expandSection" class="expand-section">
+                    <button id="expandBtn" class="expand-btn">
+                        <span class="expand-btn-text">Show More Recommendations</span>
+                        <span class="expand-btn-icon">⌄</span>
+                    </button>
+                </div>
+
+                <!-- Expanded vertical list (infinite scroll) -->
+                <div id="expandedList" class="expanded-list hidden">
+                    <div class="expanded-list-header">
+                        <h3 class="expanded-list-title">More Like This</h3>
+                        <div class="expanded-list-divider"></div>
+                    </div>
+                    <div id="expandedMovies" class="expanded-movies"></div>
+                    <div id="scrollLoader" class="scroll-loader hidden">
+                        <div class="scroll-spinner"></div>
+                        <span class="scroll-loader-text">Loading more...</span>
+                    </div>
+                    <div id="endOfList" class="end-of-list hidden">
+                        <p class="end-of-list-text">— That's all we've got —</p>
+                    </div>
+                </div>
             </div>
 
             <div id="errorState" class="error-state hidden">
@@ -64,12 +100,9 @@
                 <p class="error-text"></p>
             </div>
         </main>
-
-        <!-- <footer class="footer">
-            <p class="footer-text">Powered by cinematic algorithms & film theory</p>
-        </footer> -->
     </div>
 
     <script src="script.js"></script>
 </body>
+
 </html>

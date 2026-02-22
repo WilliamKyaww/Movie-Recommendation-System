@@ -35,7 +35,6 @@ body {
     pointer-events: none;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     z-index: 1;
-    /* Removed vibrating animation */
 }
 
 .spotlight {
@@ -52,8 +51,15 @@ body {
 }
 
 @keyframes spotlight-flicker {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.85; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.85;
+    }
 }
 
 .container {
@@ -67,6 +73,7 @@ body {
     flex-direction: column;
 }
 
+/* ── Header ──────────────────────────────────────────────────────────── */
 .header {
     text-align: center;
     padding: 3rem 0 4rem;
@@ -79,6 +86,7 @@ body {
         opacity: 0;
         transform: translateY(-30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -92,13 +100,9 @@ body {
     transform: translateX(-50%);
     width: 400px;
     height: 8px;
-    background: repeating-linear-gradient(
-        90deg,
-        var(--gold-accent) 0px,
-        var(--gold-accent) 15px,
-        var(--noir-medium) 15px,
-        var(--noir-medium) 20px
-    );
+    background: repeating-linear-gradient(90deg,
+            var(--gold-accent) 0px, var(--gold-accent) 15px,
+            var(--noir-medium) 15px, var(--noir-medium) 20px);
     border: 1px solid var(--gold-dark);
     box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
 }
@@ -120,7 +124,7 @@ body {
     font-weight: 400;
     letter-spacing: 0.15em;
     color: var(--gold-accent);
-    text-shadow: 
+    text-shadow:
         0 0 10px rgba(212, 175, 55, 0.5),
         0 0 20px rgba(212, 175, 55, 0.3),
         0 0 30px rgba(212, 175, 55, 0.2),
@@ -129,15 +133,18 @@ body {
 }
 
 @keyframes glow-pulse {
-    0%, 100% { 
-        text-shadow: 
+
+    0%,
+    100% {
+        text-shadow:
             0 0 10px rgba(212, 175, 55, 0.5),
             0 0 20px rgba(212, 175, 55, 0.3),
             0 0 30px rgba(212, 175, 55, 0.2),
             3px 3px 0 rgba(0, 0, 0, 0.3);
     }
-    50% { 
-        text-shadow: 
+
+    50% {
+        text-shadow:
             0 0 20px rgba(212, 175, 55, 0.8),
             0 0 30px rgba(212, 175, 55, 0.5),
             0 0 40px rgba(212, 175, 55, 0.3),
@@ -155,16 +162,23 @@ body {
     font-style: italic;
 }
 
+/* ── Main Content ────────────────────────────────────────────────────── */
 .main-content {
     flex: 1;
     animation: fade-in 1.2s ease-out 0.3s both;
 }
 
 @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
+/* ── Search ──────────────────────────────────────────────────────────── */
 .search-section {
     margin: 0 auto 4rem;
     max-width: 700px;
@@ -175,12 +189,12 @@ body {
     padding: 2.5rem;
     border-radius: 4px;
     border: 1px solid rgba(212, 175, 55, 0.2);
-    box-shadow: 
+    box-shadow:
         0 10px 40px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.05),
         0 0 0 1px rgba(0, 0, 0, 0.5);
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .search-wrapper::before {
@@ -195,8 +209,13 @@ body {
 }
 
 @keyframes rotate-gradient {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .search-label {
@@ -215,11 +234,16 @@ body {
     display: flex;
     gap: 1rem;
     position: relative;
-    z-index: 1;
+    z-index: 10;
+}
+
+.input-with-autocomplete {
+    flex: 1;
+    position: relative;
 }
 
 .movie-input {
-    flex: 1;
+    width: 100%;
     padding: 1rem 1.5rem;
     font-family: 'Crimson Text', serif;
     font-size: 1.1rem;
@@ -242,6 +266,11 @@ body {
     box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
 }
 
+.movie-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .search-btn {
     padding: 1rem 2rem;
     font-family: 'Bebas Neue', sans-serif;
@@ -256,16 +285,17 @@ body {
     align-items: center;
     gap: 0.5rem;
     transition: all 0.3s ease;
-    box-shadow: 
+    box-shadow:
         0 4px 15px rgba(212, 175, 55, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
     position: relative;
     overflow: hidden;
+    white-space: nowrap;
 }
 
 .search-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
         0 6px 20px rgba(212, 175, 55, 0.6),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
@@ -274,7 +304,14 @@ body {
     transform: translateY(0);
 }
 
-.btn-text, .btn-icon {
+.search-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-text,
+.btn-icon {
     position: relative;
     z-index: 1;
 }
@@ -288,6 +325,87 @@ body {
     transform: translateX(4px);
 }
 
+/* ── Autocomplete Dropdown ───────────────────────────────────────────── */
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.98) 0%, rgba(30, 30, 30, 0.98) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+}
+
+.autocomplete-item {
+    padding: 0.85rem 1.2rem;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-item:hover {
+    background: rgba(212, 175, 55, 0.12);
+}
+
+.autocomplete-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.autocomplete-title strong {
+    color: var(--gold-light);
+    font-weight: 600;
+}
+
+.autocomplete-meta {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* ── Data Loading State ──────────────────────────────────────────────── */
+.data-loading-state {
+    text-align: center;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.data-loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(212, 175, 55, 0.2);
+    border-top-color: var(--gold-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.data-loading-text {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+}
+
+/* ── Loading State ───────────────────────────────────────────────────── */
 .loading-state {
     text-align: center;
     padding: 4rem 2rem;
@@ -328,7 +446,9 @@ body {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .loading-text {
@@ -339,6 +459,106 @@ body {
     font-style: italic;
 }
 
+/* ── Searched Movie Info ─────────────────────────────────────────────── */
+.searched-movie-info {
+    margin-bottom: 2.5rem;
+}
+
+.searched-movie-card {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(42, 42, 42, 0.8) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-left: 4px solid var(--gold-accent);
+    border-radius: 4px;
+    padding: 1.8rem 2rem;
+    position: relative;
+    overflow: hidden;
+    animation: fade-in-up 0.6s ease;
+}
+
+.searched-movie-card::after {
+    content: 'YOUR PICK';
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: var(--gold-dark);
+    opacity: 0.6;
+}
+
+.searched-movie-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    margin-bottom: 0.6rem;
+}
+
+.searched-movie-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.searched-meta {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 2px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: var(--gold-accent);
+}
+
+.searched-meta.adult-label {
+    background: rgba(139, 0, 0, 0.2);
+    border-color: rgba(139, 0, 0, 0.4);
+    color: #ff6b6b;
+}
+
+.searched-movie-genres {
+    font-family: 'Crimson Text', serif;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.6rem;
+    font-style: italic;
+}
+
+.searched-movie-crew {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.searched-movie-crew strong {
+    color: var(--gold-light);
+}
+
+.searched-movie-tags {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-top: 0.4rem;
+    font-style: italic;
+    max-height: 4.5em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.searched-movie-tags strong {
+    color: var(--text-secondary);
+    font-style: normal;
+}
+
+/* ── Results ─────────────────────────────────────────────────────────── */
 .results-section {
     animation: fade-in-up 0.8s ease;
 }
@@ -348,6 +568,7 @@ body {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -374,6 +595,7 @@ body {
     margin: 0 auto;
 }
 
+/* ── Recommendation Grid Cards ───────────────────────────────────────── */
 .recommendations-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -386,25 +608,43 @@ body {
     border: 1px solid rgba(212, 175, 55, 0.2);
     border-radius: 4px;
     padding: 1.5rem;
-    cursor: pointer;
+    cursor: default;
     transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
     animation: card-appear 0.6s ease both;
 }
 
-.movie-card:nth-child(1) { animation-delay: 0.1s; }
-.movie-card:nth-child(2) { animation-delay: 0.2s; }
-.movie-card:nth-child(3) { animation-delay: 0.3s; }
-.movie-card:nth-child(4) { animation-delay: 0.4s; }
-.movie-card:nth-child(5) { animation-delay: 0.5s; }
-.movie-card:nth-child(6) { animation-delay: 0.6s; }
+.movie-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.movie-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.movie-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.movie-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.movie-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.movie-card:nth-child(6) {
+    animation-delay: 0.6s;
+}
 
 @keyframes card-appear {
     from {
         opacity: 0;
         transform: translateY(20px) scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -446,9 +686,22 @@ body {
     pointer-events: none;
 }
 
+.similarity-badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 2px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--gold-light);
+    margin-bottom: 0.5rem;
+}
+
 .movie-title {
     font-family: 'Cinzel', serif;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 600;
     color: var(--gold-light);
     margin-bottom: 0.5rem;
@@ -461,16 +714,37 @@ body {
     font-family: 'Crimson Text', serif;
     font-size: 0.9rem;
     color: var(--text-secondary);
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
     font-style: italic;
 }
 
 .movie-description {
     font-family: 'Crimson Text', serif;
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 0.95rem;
+    line-height: 1.5;
     color: var(--text-primary);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.movie-crew {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+}
+
+.movie-tags {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 0.6rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .movie-rating {
@@ -485,6 +759,232 @@ body {
     color: var(--gold-accent);
 }
 
+/* ── Expand Section ──────────────────────────────────────────────────── */
+.expand-section {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.expand-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 2.5rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.12em;
+    color: var(--gold-accent);
+    background: transparent;
+    border: 2px solid rgba(212, 175, 55, 0.4);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.expand-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.expand-btn:hover::before {
+    opacity: 1;
+}
+
+.expand-btn:hover {
+    border-color: var(--gold-accent);
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
+}
+
+.expand-btn:active {
+    transform: translateY(0);
+}
+
+.expand-btn-icon {
+    font-size: 1.3rem;
+    transition: transform 0.3s ease;
+}
+
+.expand-btn:hover .expand-btn-icon {
+    transform: translateY(3px);
+}
+
+/* ── Expanded List (Vertical / Infinite Scroll) ──────────────────────── */
+.expanded-list {
+    margin-top: 1rem;
+    animation: fade-in-up 0.5s ease;
+}
+
+.expanded-list-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.expanded-list-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    letter-spacing: 0.12em;
+    color: var(--gold-dark);
+    margin-bottom: 0.5rem;
+}
+
+.expanded-list-divider {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+    margin: 0 auto;
+}
+
+.expanded-movies {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.expanded-movie-item {
+    display: flex;
+    gap: 1.2rem;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+    transition: all 0.3s ease;
+    animation: item-slide-in 0.4s ease both;
+    position: relative;
+}
+
+.expanded-movie-item:hover {
+    background: rgba(212, 175, 55, 0.04);
+}
+
+@keyframes item-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.expanded-item-rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: rgba(212, 175, 55, 0.2);
+    min-width: 40px;
+    text-align: center;
+    padding-top: 0.2rem;
+    line-height: 1;
+}
+
+.expanded-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.expanded-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.3rem;
+}
+
+.expanded-item-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    line-height: 1.3;
+}
+
+.expanded-item-match {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: var(--gold-dark);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.expanded-item-meta {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.2rem;
+}
+
+.expanded-item-genres {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 0.2rem;
+}
+
+.expanded-item-crew {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.expanded-item-tags {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.75rem;
+    color: rgba(168, 168, 168, 0.6);
+    font-style: italic;
+    margin-top: 0.2rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── Scroll Loader ───────────────────────────────────────────────────── */
+.scroll-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 2rem;
+}
+
+.scroll-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(212, 175, 55, 0.2);
+    border-top-color: var(--gold-accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+.scroll-loader-text {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+}
+
+.end-of-list {
+    text-align: center;
+    padding: 2rem;
+}
+
+.end-of-list-text {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.15em;
+    opacity: 0.6;
+}
+
+/* ── Error State ─────────────────────────────────────────────────────── */
 .error-state {
     text-align: center;
     padding: 4rem 2rem;
@@ -499,9 +999,19 @@ body {
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    75% {
+        transform: translateX(10px);
+    }
 }
 
 .error-text {
@@ -511,6 +1021,7 @@ body {
     font-style: italic;
 }
 
+/* ── Footer ──────────────────────────────────────────────────────────── */
 .footer {
     text-align: center;
     padding: 2rem 0 1rem;
@@ -525,10 +1036,12 @@ body {
     letter-spacing: 0.05em;
 }
 
+/* ── Utility ─────────────────────────────────────────────────────────── */
 .hidden {
     display: none !important;
 }
 
+/* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
@@ -554,5 +1067,30 @@ body {
 
     .film-strip {
         width: 250px;
+    }
+
+    .searched-movie-card {
+        padding: 1.2rem 1rem;
+    }
+
+    .searched-movie-card::after {
+        font-size: 0.65rem;
+        top: 8px;
+        right: 10px;
+    }
+
+    .expanded-movie-item {
+        padding: 1rem;
+        gap: 0.8rem;
+    }
+
+    .expanded-item-rank {
+        font-size: 1.4rem;
+        min-width: 30px;
+    }
+
+    .expand-btn {
+        width: 100%;
+        justify-content: center;
     }
 }

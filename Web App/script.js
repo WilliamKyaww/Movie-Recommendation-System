@@ -1,12 +1,14 @@
-// ═══════════════════════════════════════════════════════════════════════
-// CineMatch — Content-Based Movie Recommendation Engine
-// Loads precomputed TF-IDF cosine similarity data from movie_data.json
-// ═══════════════════════════════════════════════════════════════════════
+// ═════════════════════════════════════════════════════════════════════
+// CineMatch — Hybrid Movie Recommendation Engine
+// Blends content-based (TF-IDF) and collaborative (SVD) filtering
+// ═════════════════════════════════════════════════════════════════════
 
-// ── State ─────────────────────────────────────────────────────────────
+// ── State ─────────────────────────────────────────────────────────────────
 let movieData = null;           // { movies: [...], similarity: [...] }
+let collabData = null;          // { collab_similarity: { idx: [[idx,score],...] } }
 let titleIndex = [];            // [{lowerTitle, idx}] for fast search
-let currentSimilarList = [];    // full sorted similar-movie list for current selection
+let currentSimilarList = [];    // blended similar-movie list for current selection
+let currentMovieIndex = null;   // index of the currently searched movie
 let expandedOffset = 0;         // how many movies loaded in expanded list
 const TOP_CARDS = 6;            // initial recommendation grid count
 const EXPAND_BATCH = 10;        // how many to load per scroll batch
@@ -28,13 +30,31 @@ const expandedList = document.getElementById('expandedList');
 const expandedMovies = document.getElementById('expandedMovies');
 const scrollLoader = document.getElementById('scrollLoader');
 const endOfList = document.getElementById('endOfList');
+const filteringToggle = document.getElementById('filteringToggle');
+const hybridSlider = document.getElementById('hybridSlider');
+const sliderValue = document.getElementById('sliderValue');
+const filterLabelLeft = document.querySelector('.filter-label-left');
+const filterLabelRight = document.querySelector('.filter-label-right');
 
-// ── Load Data ─────────────────────────────────────────────────────────
+// ── Load Data ─────────────────────────────────────────────────────────────
 async function loadMovieData() {
     try {
-        const response = await fetch('movie_data.json');
-        if (!response.ok) throw new Error('Failed to load movie data');
-        movieData = await response.json();
+        // Load both datasets in parallel
+        const [contentRes, collabRes] = await Promise.all([
+            fetch('movie_data.json'),
+            fetch('collab_data.json')
+        ]);
+
+        if (!contentRes.ok) throw new Error('Failed to load content data');
+        movieData = await contentRes.json();
+
+        // Collaborative data is optional — if it fails, hybrid is just disabled
+        if (collabRes.ok) {
+            collabData = await collabRes.json();
+            console.log(`Collaborative data loaded: ${Object.keys(collabData.collab_similarity).length} movies`);
+        } else {
+            console.warn('Collaborative data not available, content-only mode');
+        }
 
         // Build a title lookup index for fast autocomplete
         titleIndex = movieData.movies.map((m, idx) => ({
@@ -45,6 +65,13 @@ async function loadMovieData() {
         dataLoadingState.classList.add('hidden');
         movieInput.disabled = false;
         searchBtn.disabled = false;
+
+        // Show the filtering toggle only if collab data is available
+        if (collabData) {
+            filteringToggle.classList.remove('hidden');
+            updateSliderLabel(0);
+        }
+
         movieInput.focus();
     } catch (err) {
         dataLoadingState.querySelector('.data-loading-text').textContent =
@@ -54,9 +81,10 @@ async function loadMovieData() {
     }
 }
 
-// Disable inputs until data loads
+// Disable inputs until data loads & lock scrolling
 movieInput.disabled = true;
 searchBtn.disabled = true;
+document.body.classList.add('scroll-locked');
 loadMovieData();
 
 // ── Event Listeners ───────────────────────────────────────────────────
@@ -78,8 +106,33 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Infinite scroll on the expanded list
 window.addEventListener('scroll', handleInfiniteScroll);
+
+// ── Hybrid Slider Events ───────────────────────────────────────────────
+hybridSlider.addEventListener('input', (e) => {
+    const weight = parseInt(e.target.value, 10);
+    updateSliderLabel(weight);
+
+    // If a movie is currently displayed, re-render with new blend
+    if (currentMovieIndex !== null) {
+        reblendAndRender(currentMovieIndex);
+    }
+});
+
+function updateSliderLabel(weight) {
+    // Update label text
+    if (weight === 0) {
+        sliderValue.textContent = 'Content Only';
+    } else if (weight === 100) {
+        sliderValue.textContent = 'Collaborative Only';
+    } else {
+        sliderValue.textContent = `${100 - weight}% Content / ${weight}% Collab`;
+    }
+
+    // Highlight the active side
+    filterLabelLeft.classList.toggle('active', weight < 50);
+    filterLabelRight.classList.toggle('active', weight > 50);
+}
 
 // Expand button
 expandBtn.addEventListener('click', toggleExpand);
@@ -171,23 +224,78 @@ function handleSearch() {
 
 function performSearch(movieIndex) {
     const movie = movieData.movies[movieIndex];
-    const simList = movieData.similarity[movieIndex]; // [[idx, score], ...]
-
-    // Store for infinite scroll
-    currentSimilarList = simList;
-    expandedOffset = 0;
+    currentMovieIndex = movieIndex;
 
     // Update input to show the exact matched title
     movieInput.value = movie.title;
 
     hideAllStates();
 
+    // Unlock scrolling (Feature 1)
+    document.body.classList.remove('scroll-locked');
+
     // Show info about the searched movie
     renderSearchedMovieInfo(movie);
 
+    // Blend and render recommendations
+    reblendAndRender(movieIndex);
+
+    resultsSection.classList.remove('hidden');
+    setTimeout(() => resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+}
+
+// ── Blending Logic ───────────────────────────────────────────────────
+function blendRecommendations(movieIndex) {
+    const contentList = movieData.similarity[movieIndex] || [];
+    const weight = parseInt(hybridSlider.value, 10) / 100; // 0..1
+
+    // Pure content mode — no blending needed
+    if (weight === 0 || !collabData) {
+        return contentList;
+    }
+
+    // Get collaborative list for this movie
+    const collabList = collabData.collab_similarity[String(movieIndex)] || [];
+
+    // Pure collaborative mode
+    if (weight === 1) {
+        return collabList.length > 0 ? collabList : contentList;
+    }
+
+    // Hybrid blend: merge both lists
+    const scoreMap = new Map(); // movieIdx -> { content, collab }
+
+    for (const [idx, score] of contentList) {
+        if (!scoreMap.has(idx)) scoreMap.set(idx, { content: 0, collab: 0 });
+        scoreMap.get(idx).content = score;
+    }
+
+    for (const [idx, score] of collabList) {
+        if (!scoreMap.has(idx)) scoreMap.set(idx, { content: 0, collab: 0 });
+        scoreMap.get(idx).collab = score;
+    }
+
+    // Compute blended scores
+    const blended = [];
+    for (const [idx, scores] of scoreMap) {
+        const blendedScore = (1 - weight) * scores.content + weight * scores.collab;
+        blended.push([idx, Math.round(blendedScore * 10000) / 10000]);
+    }
+
+    // Sort descending by blended score
+    blended.sort((a, b) => b[1] - a[1]);
+
+    return blended;
+}
+
+function reblendAndRender(movieIndex) {
+    // Compute blended recommendations
+    currentSimilarList = blendRecommendations(movieIndex);
+    expandedOffset = 0;
+
     // Display top 6 as cards
     recommendationsGrid.innerHTML = '';
-    const topMovies = simList.slice(0, TOP_CARDS);
+    const topMovies = currentSimilarList.slice(0, TOP_CARDS);
     topMovies.forEach(([idx, score], i) => {
         const rec = movieData.movies[idx];
         recommendationsGrid.appendChild(createMovieCard(rec, i + 1, score));
@@ -202,9 +310,6 @@ function performSearch(movieIndex) {
     endOfList.classList.add('hidden');
     scrollLoader.classList.add('hidden');
     expandedOffset = TOP_CARDS;
-
-    resultsSection.classList.remove('hidden');
-    setTimeout(() => resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
 }
 
 // ── Tag truncation helper ─────────────────────────────────────────────
@@ -213,6 +318,12 @@ function truncateTags(tagsStr, maxTags = 5) {
     const tagList = tagsStr.split(',').map(t => t.trim()).filter(Boolean);
     if (tagList.length <= maxTags) return tagList.join(', ');
     return tagList.slice(0, maxTags).join(', ') + ` +${tagList.length - maxTags} more`;
+}
+
+// ── Google search URL helper ──────────────────────────────────────────
+function googleSearchUrl(movie) {
+    const query = movie.year ? `${movie.title} (${movie.year})` : movie.title;
+    return `https://www.google.com/search?q=${encodeURIComponent(query)}`;
 }
 
 // ── Render searched movie info ────────────────────────────────────────
@@ -234,6 +345,7 @@ function renderSearchedMovieInfo(movie) {
             ${movie.directors ? `<p class="searched-movie-crew"><strong>Director:</strong> ${movie.directors}</p>` : ''}
             ${movie.writers ? `<p class="searched-movie-crew"><strong>Writer:</strong> ${movie.writers}</p>` : ''}
             ${movie.tags ? `<p class="searched-movie-tags"><strong>Tags:</strong> ${truncateTags(movie.tags, 6)}</p>` : ''}
+            <a href="${googleSearchUrl(movie)}" target="_blank" rel="noopener" class="google-link">Look up</a>
         </div>
     `;
 }
@@ -271,6 +383,7 @@ function createMovieCard(movie, number, score) {
         ${crewLine ? `<p class="movie-crew">${crewLine}</p>` : ''}
         ${tagsLine ? `<p class="movie-tags">${tagsLine}</p>` : ''}
         <span class="movie-rating">★ ${movie.rating || 'N/A'}</span>
+        <a href="${googleSearchUrl(movie)}" target="_blank" rel="noopener" class="google-link">Look up</a>
     `;
 
     return card;
@@ -342,6 +455,7 @@ function createExpandedMovieItem(movie, rank, score) {
             ${genreStr ? `<p class="expanded-item-genres">${genreStr}</p>` : ''}
             ${movie.directors ? `<p class="expanded-item-crew">Dir: ${movie.directors}</p>` : ''}
             ${movie.tags ? `<p class="expanded-item-tags">${truncateTags(movie.tags, 8)}</p>` : ''}
+            <a href="${googleSearchUrl(movie)}" target="_blank" rel="noopener" class="expanded-item-link">Look up</a>
         </div>
     `;
 

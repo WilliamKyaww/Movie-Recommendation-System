@@ -46,6 +46,19 @@
                 </div>
             </div>
 
+            <!-- Filtering mode toggle -->
+            <div id="filteringToggle" class="filtering-toggle hidden">
+                <div class="filtering-toggle-inner">
+                    <span class="filter-label filter-label-left">Content-Based</span>
+                    <div class="slider-container">
+                        <input type="range" id="hybridSlider" class="hybrid-slider" min="0" max="100" value="0"
+                            step="1">
+                        <div class="slider-value" id="sliderValue">Content Only</div>
+                    </div>
+                    <span class="filter-label filter-label-right">Collaborative</span>
+                </div>
+            </div>
+
             <!-- Initial data loading indicator -->
             <div id="dataLoadingState" class="data-loading-state">
                 <div class="data-loading-spinner"></div>

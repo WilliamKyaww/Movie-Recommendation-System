@@ -1,5 +1,20 @@
 # Movie Recommendation System
 
+## Running
+
+From the root of the repository, start a local web server inside the `Web App` folder:
+
+```powershell
+cd "Web App"
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000` in your browser.
+
+This uses a relative path, so it will work regardless of where someone cloned the repository.
+
+---
+
 ## Overview
 A hybrid movie recommendation system that combines **collaborative** and **content-based** filtering techniques to generate personalised movie suggestions, using user–item interaction data and text-based content features to improve recommendation accuracy. The aim of the project is for the recommendation system to learn user preferences by analysing both historical ratings and movie metadata to deliver more relevant/better tailored recommendations.
 
@@ -20,7 +35,7 @@ It uses the **IMDB–MovieLens merged dataset** and implements algorithms to ide
 ## Technologies Used
 - **Language**: Python
 - **Libraries**: NumPy, pandas, Scikit-learn, Matplotlib, os  
-- **Techniques**: TF-IDF Vectorization, Cosine Similarity  
+- **Techniques**: TF-IDF Vectorisation, Cosine Similarity  
 - **Environment**: Jupyter Notebook, Google Colab  
   
 ---
@@ -75,3 +90,4 @@ Cleaned Datasets/
 ├── Final_Movie_Data.tsv
 └── merged_movie_data.tsv
 ```
+
